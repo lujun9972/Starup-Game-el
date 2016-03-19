@@ -1,4 +1,4 @@
-* Starup-Game-Elc
+* Starup-Game-Elisp
 文字冒险游戏：南山启示录
 
 * 背景

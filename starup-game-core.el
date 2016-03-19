@@ -16,6 +16,7 @@
   ((encourage-reasons :initform '("刚跑了8公里，精神状态良好" "一边上学一边写代码" "灵感大发") :allocation :class :protection :protected)
    (delay-reasons :initform '("昨晚补番到大半夜，严重睡眠不足" "撸了一个C++模板，然而并没有什么卵用" "进入了拖延症晚期") :allocation :class :protection :protected)
    (consumptions :initform '("一路向西去了东莞" "现阶段对生活毫无追求的他把所有工资存进了余额宝") :allocation :class :protection :protected)
+   (job :initform "程序员")
    ))
 
 (defmethod work ((coder coder) remain-difficulty)
@@ -23,17 +24,17 @@
          (forward (if (> (starup-game-util/randint 0 9)
                          4)
                       (progn
-                        (message (concat code-name (starup-game-util/randseq (oref coder encourage-reasons))))
+                        (starup-game-util/output (concat code-name (starup-game-util/randseq (oref coder encourage-reasons))))
                         (starup-game-util/randint 10 100))
-                    (message (concat code-name (starup-game-util/randseq (oref coder delay-reasons))))
+                    (starup-game-util/output (concat code-name (starup-game-util/randseq (oref coder delay-reasons))))
                     (starup-game-util/randint 1 5))))
-    (message "项目进度增加%d" forward)
+    (starup-game-util/output "项目进度增加%d" forward)
     (- remain-difficulty forward)))
 
 (defmethod pay ((coder coder) company-money)
   (let ((coder-name (oref coder name))
         (coder-salary (oref coder salary)))
-    (message "%s领取了%元工资. 然后%s" coder-name coder-salary (starup-game-util/randseq (oref coder consumptions)))
+    (starup-game-util/output "%s领取了%d元工资. 然后%s" coder-name coder-salary (starup-game-util/randseq (oref coder consumptions)))
     (- company-money coder-salary)))
 
 (defun load-coders ()
@@ -58,8 +59,8 @@
   (let* ((coders (company-coders company))
          (code-names (mapcar (lambda (coder)
                                (oref coder name))
-                             coders))))
-  (message "%s带着发家致富的梦想加入的团队。" (string-join code-names ","))
+                             coders)))
+    (starup-game-util/output "%s带着发家致富的梦想加入的团队。" (string-join code-names ",")))
   (starup-game-util/next))
 
 (defun could-hire (company)
@@ -69,27 +70,28 @@
 
 (cl-defun hire (company)
   (when (could-hire company)
-    (message "你可以最多可以雇佣%s名员工，请谨慎选择:%s" (company-max-coders company))
+    (starup-game-util/output "你可以最多可以雇佣%s名员工，请谨慎选择:" (company-max-coders company))
     (starup-game-util/next)
     (dolist (coder (company-avalible-coders company))
       (unless (could-hire company)
         (cl-return))
-      (message "------")
-      (message "%s:%s 薪水:%s"
+      (starup-game-util/output "------")
+      (starup-game-util/output "%s:%s 薪水:%s"
                (oref coder job)
                (oref coder name)
                (oref coder salary))
       (when (starup-game-util/confirm)
-        (nconc (company-coders (list coder)))
-        (message "%s加入了你的团队" (oref coder name)))
-      (when (< (length (company-coders company))
-               (company-min-coders company))
-        (message "你至少需要%s名员工加入你的团队!" (company-min-coders company))
-        (hire company)))))
+        (setf (company-coders company)
+              (append (company-coders company) (list coder)))
+        (starup-game-util/output "%s加入了你的团队" (oref coder name))))
+    (when (< (length (company-coders company))
+             (company-min-coders company))
+      (starup-game-util/output "你至少需要%s名员工加入你的团队!" (company-min-coders company))
+      (hire company))))
 
 (defun hire-or-not (company)
   (when (could-hire company)
-    (message "你有空余的工位, 你需要招募员工么")
+    (starup-game-util/output "你有空余的工位, 你需要招募员工么")
     (when (starup-game-util/confirm)
       (hire company))))
 
@@ -103,7 +105,7 @@
 
 (defun fire-or-not (company)
   (when (could-hire company)
-    (message "你可以解雇让你不爽的员工")
+    (starup-game-util/output "你可以解雇让你不爽的员工")
     (when (starup-game-util/confirm)
       (fire company))))
 

@@ -18,4 +18,11 @@
   (let ((idx (random (length seq))))
     (elt seq idx)))
 
+(defun starup-game-util/output (fmt &rest args)
+  (select-window (display-buffer (get-buffer-create "*starup-game*")))
+  (goto-char (point-max))
+  (insert (apply #'format fmt args))
+  (newline))
+
 (provide 'starup-game-util)
+『2015又是一幅好光景啊』加班结束之后的你看了看四周，已是深夜。
