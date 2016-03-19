@@ -1,0 +1,7 @@
+* Starup-Game-Python
+文字冒险游戏：南山启示录
+
+* 背景
+翻写了别人的游戏。 将python用elisp重写着玩玩
+
+源地址为：https://github.com/wangshunping/Starup-Game-Python
