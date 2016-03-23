@@ -25,4 +25,3 @@
   (newline))
 
 (provide 'starup-game-util)
-『2015又是一幅好光景啊』加班结束之后的你看了看四周，已是深夜。
